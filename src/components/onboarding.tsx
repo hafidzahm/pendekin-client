@@ -19,6 +19,7 @@ import {
   Globe,
 } from "lucide-react";
 import { Link } from "react-router";
+import Footer from "./footer-mini";
 
 const Onboarding = () => {
   return (
@@ -180,17 +181,7 @@ const Onboarding = () => {
       </section>
 
       {/* Footer */}
-      <footer className="border-t bg-muted/30">
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex items-center justify-center space-x-2">
-            <LinkIcon className="w-5 h-5 text-primary" />
-            <span className="font-semibold">Pendekin</span>
-            <span className="text-muted-foreground">
-              • The smart way to shorten links
-            </span>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };
