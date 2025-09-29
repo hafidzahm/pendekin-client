@@ -1,3 +1,5 @@
+import Onboarding from "@/components/onboarding";
+
 export default function OnboardingPage() {
-  return <h1>Onboarding Page</h1>;
+  return <Onboarding />;
 }

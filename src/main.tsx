@@ -8,6 +8,7 @@ import RegisterPage from "./pages/RegisterPage";
 import AuthLayout from "./layouts/AuthLayout";
 import HomePage from "./pages/HomePage";
 import PublicLayout from "./layouts/PublicLayout";
+import NotFound from "./pages/NotFound";
 
 createRoot(document.getElementById("root")!).render(
   // <StrictMode>
@@ -18,11 +19,10 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
       </Route>
-    </Routes>
-    <Routes>
       <Route element={<AuthLayout />}>
         <Route path="/dashboard" element={<HomePage />} />
       </Route>
+      <Route path="*" element={<NotFound />} />
     </Routes>
   </BrowserRouter>
   // </StrictMode>
