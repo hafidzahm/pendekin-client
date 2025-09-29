@@ -1,3 +1,5 @@
+import { RegisterForm } from "@/components/register-form";
+
 export default function RegisterPage() {
-  return <h1>Register Page</h1>;
+  return <RegisterForm className="max-w-xl w-full" />;
 }

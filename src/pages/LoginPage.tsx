@@ -1,3 +1,5 @@
+import { LoginForm } from "@/components/login-form";
+
 export default function LoginPage() {
-  return <h1>Login Page</h1>;
+  return <LoginForm className="max-w-xl w-full" />;
 }

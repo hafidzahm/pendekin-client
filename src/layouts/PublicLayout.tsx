@@ -2,13 +2,10 @@ import { Outlet } from "react-router";
 
 export default function PublicLayout() {
   return (
-    <div>
-      <main>
+    <div className="w-full h-screen">
+      <main className="flex justify-center items-center h-screen">
         <Outlet />
       </main>
-      <footer>
-        <h1>Footer</h1>
-      </footer>
     </div>
   );
 }
