@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -17,52 +17,68 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router";
+import { http } from "@/helpers/axios";
 
 const DashboardPage = () => {
+  useEffect(() => {
+    fetchDataUser();
+  }, []);
   const navigate = useNavigate();
-
   // Mock data for demonstration
-  const [links] = useState([
+  const [links, setLinks] = useState([
     {
       id: 1,
-      originalSite:
+      original_site:
         "https://www.example.com/very-long-url-that-needs-shortening",
-      shortedSite: "pendekin.app/example1",
-      siteName: "example1",
-      clickCount: 42,
+      shorted_site: "pendekin.app/example1",
+
+      click_count: 42,
       createdAt: "2024-01-15",
     },
     {
       id: 2,
-      originalSite: "https://github.com/user/repository/blob/main/README.md",
-      shortedSite: "pendekin.app/github-repo",
-      siteName: "github-repo",
-      clickCount: 18,
+      original_site: "https://github.com/user/repository/blob/main/README.md",
+      shorted_site: "pendekin.app/github-repo",
+
+      click_count: 18,
       createdAt: "2024-01-14",
     },
     {
       id: 3,
-      originalSite:
+      original_site:
         "https://docs.example.com/api/documentation/getting-started",
-      shortedSite: "pendekin.app/docs",
-      siteName: "docs",
-      clickCount: 7,
+      shorted_site: "pendekin.app/docs",
+
+      click_count: 7,
       createdAt: "2024-01-13",
     },
   ]);
 
+  async function fetchDataUser() {
+    try {
+      const access_token = localStorage.getItem("access_token");
+      const response = await http.get("/links", {
+        headers: { Authorization: `Bearer ${access_token}` },
+      });
+      console.log(response, "<----- data user links");
+      setLinks(response.data.findedLink);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   const handleCopyLink = (shortUrl: string) => {
-    navigator.clipboard.writeText(`https://${shortUrl}`);
+    navigator.clipboard.writeText(`http://localhost:3000/r/${shortUrl}`);
     toast("Link copied!", {
       description: "The short link has been copied to your clipboard.",
     });
   };
 
-  const handleGoToLink = (originalUrl: string) => {
-    window.open(originalUrl, "_blank");
+  const handleGoToLink = (shortUrl: string) => {
+    window.open(`http://localhost:3000/r/${shortUrl}`, "_blank");
   };
 
-  const totalClicks = links.reduce((sum, link) => sum + link.clickCount, 0);
+  const totalClicks = links.reduce((sum, link) => sum + link.click_count, 0);
 
   return (
     <div className="min-h-screen bg-background p-4">
@@ -146,28 +162,28 @@ const DashboardPage = () => {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center space-x-2 mb-2">
                           <h3 className="font-medium truncate">
-                            {link.siteName}
+                            {link.shorted_site}
                           </h3>
                           <Badge variant="secondary">
-                            {link.clickCount} clicks
+                            {link.click_count} clicks
                           </Badge>
                         </div>
                         <p className="text-sm text-primary font-mono mb-1">
-                          {link.shortedSite}
+                          pendekin-api.hafizh.web.id/{link.shorted_site}
                         </p>
                         <p className="text-sm text-muted-foreground truncate">
-                          {link.originalSite}
+                          {link.original_site}
                         </p>
                         <p className="text-xs text-muted-foreground mt-2">
                           Created:{" "}
-                          {new Date(link.createdAt).toLocaleDateString()}
+                          {new Date(link.createdAt).toLocaleDateString("id-ID")}
                         </p>
                       </div>
                       <div className="flex space-x-2 ml-4">
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => handleCopyLink(link.shortedSite)}
+                          onClick={() => handleCopyLink(link.shorted_site)}
                         >
                           <Copy className="w-4 h-4 mr-1" />
                           Copy
@@ -175,7 +191,7 @@ const DashboardPage = () => {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => handleGoToLink(link.originalSite)}
+                          onClick={() => handleGoToLink(link.shorted_site)}
                         >
                           <ExternalLink className="w-4 h-4 mr-1" />
                           Visit
