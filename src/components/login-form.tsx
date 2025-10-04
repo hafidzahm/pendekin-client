@@ -63,7 +63,8 @@ export function LoginForm({
 
       if (response.status === 200) {
         localStorage.setItem("access_token", response.data.access_token);
-        toast.success("Login successfully");
+        localStorage.setItem("name", response.data.name);
+        toast.success(`Welcome back, ${response.data.name} !`);
       }
       setLoading(false);
     } catch (error) {
