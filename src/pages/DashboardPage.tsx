@@ -18,11 +18,40 @@ import {
 import { toast } from "sonner";
 import { useNavigate } from "react-router";
 import { http } from "@/helpers/axios";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import { formSchema } from "@/components/form/formSchema";
+import type z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { AxiosError } from "axios";
 
 const DashboardPage = () => {
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [count, setCount] = useState(0);
   useEffect(() => {
     fetchDataUser();
-  }, []);
+  }, [count]);
   const navigate = useNavigate();
   // Mock data for demonstration
   const [links, setLinks] = useState([
@@ -76,9 +105,67 @@ const DashboardPage = () => {
 
   const handleGoToLink = (shortUrl: string) => {
     window.open(`http://localhost:3000/r/${shortUrl}`, "_blank");
+    setCount(count + 1);
   };
 
+  function handleVisit(link: string) {
+    handleGoToLink(link.shorted_site);
+  }
+
   const totalClicks = links.reduce((sum, link) => sum + link.click_count, 0);
+
+  // ====== form
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      original_site: "",
+      shorted_site: "",
+    },
+  });
+
+  // 2. Define a submit handler.
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    // Do something with the form values.
+    // ✅ This will be type-safe and validated.
+    console.log(values);
+    try {
+      setLoading(true);
+      const response = await http.post(
+        "/shorts",
+        {
+          original_site: values.original_site,
+          shorted_site: values.shorted_site,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+      console.log(response, "<-----responseResult");
+      setLoading(false);
+      if (response.status === 201) {
+        setOpen(false);
+        toast.success("New shorted link created successfully.");
+      }
+      setCount(count + 1);
+    } catch (error) {
+      console.log(error, "<----- errror post");
+      setLoading(false);
+      const errorField = error.response.data.message.includes("original_site")
+        ? "Original URL"
+        : "Custom Name";
+      if (error instanceof AxiosError && error.response?.status === 400) {
+        toast.error(
+          `${errorField} registered by other user. Fill other unique ${errorField}`
+        );
+      }
+      if (error instanceof AxiosError && error.code === "ERR_NETWORK") {
+        toast.error("Check your network connection.");
+      }
+    }
+  }
 
   return (
     <div className="min-h-screen bg-background p-4">
@@ -89,10 +176,104 @@ const DashboardPage = () => {
             <h1 className="text-3xl font-bold">Dashboard</h1>
             <p className="text-muted-foreground">Manage your shortened links</p>
           </div>
-          <Button onClick={() => navigate("/add-site")}>
-            <Plus className="w-4 h-4 mr-2" />
-            Add New Link
-          </Button>
+
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="w-4 h-4 mr-2" />
+                Add New Link
+              </Button>
+            </DialogTrigger>
+
+            <Form {...form}>
+              <DialogContent className="sm:max-w-[425px]">
+                <form onSubmit={form.handleSubmit(onSubmit)}>
+                  <DialogHeader>
+                    <DialogTitle>Add New Link</DialogTitle>
+                    <DialogDescription>
+                      Create a shortened link for easy sharing
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="grid gap-4 pt-5">
+                    <div className="grid gap-3">
+                      <FormField
+                        control={form.control}
+                        name="original_site"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Original URL</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="https://example.com/very-long-url"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormDescription>
+                              Enter the full URL you want to shorten
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className="grid gap-3">
+                      <FormField
+                        control={form.control}
+                        name="shorted_site"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Custom Name</FormLabel>
+                            <FormControl>
+                              <Input placeholder="shadcn" {...field} />
+                            </FormControl>
+                            <FormDescription>
+                              This is your custom link name.
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className="grid gap-3">
+                      <div className="bg-muted p-4 rounded-md">
+                        <p className="text-sm font-medium mb-2">Preview:</p>
+                        <p className="text-sm text-muted-foreground">
+                          pendekin.app/
+                          {form.watch("shorted_site") || "abc123"}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <DialogClose asChild>
+                      <Button variant="outline">Cancel</Button>
+                    </DialogClose>
+
+                    <Button type="submit" disabled={loading}>
+                      {loading ? (
+                        <span className="flex items-center gap-1">
+                          Creating short link
+                          <span className="flex gap-0.5">
+                            <span className="animate-[bounce_1s_ease-in-out_0s_infinite]">
+                              .
+                            </span>
+                            <span className="animate-[bounce_1s_ease-in-out_0.2s_infinite]">
+                              .
+                            </span>
+                            <span className="animate-[bounce_1s_ease-in-out_0.4s_infinite]">
+                              .
+                            </span>
+                          </span>
+                        </span>
+                      ) : (
+                        "Create short link"
+                      )}
+                    </Button>
+                  </DialogFooter>
+                </form>
+              </DialogContent>
+            </Form>
+          </Dialog>
         </div>
 
         {/* Stats Cards */}
@@ -191,7 +372,7 @@ const DashboardPage = () => {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => handleGoToLink(link.shorted_site)}
+                          onClick={() => handleVisit(link)}
                         >
                           <ExternalLink className="w-4 h-4 mr-1" />
                           Visit
