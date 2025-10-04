@@ -6,7 +6,6 @@ import OnboardingPage from "./pages/OnboardingPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import AuthLayout from "./layouts/AuthLayout";
-import HomePage from "./pages/HomePage";
 import PublicLayout from "./layouts/PublicLayout";
 import NotFound from "./pages/NotFound";
 import { Toaster } from "sonner";

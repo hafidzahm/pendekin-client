@@ -9,7 +9,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Link, useNavigate } from "react-router";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -83,7 +82,7 @@ export function RegisterForm({
       console.log(error);
       if (error instanceof AxiosError && error.code === "ERR_BAD_REQUEST") {
         console.log("BadRequest");
-        toast.error(error.response.data.message);
+        toast.error("Invalid email or password");
       }
 
       if (error instanceof AxiosError && error.code === "ERR_NETWORK") {
