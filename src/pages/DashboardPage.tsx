@@ -48,9 +48,10 @@ import { AxiosError } from "axios";
 const DashboardPage = () => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [count, setCount] = useState(0);
   useEffect(() => {
     fetchDataUser();
-  }, []);
+  }, [count]);
   const navigate = useNavigate();
   // Mock data for demonstration
   const [links, setLinks] = useState([
@@ -104,7 +105,12 @@ const DashboardPage = () => {
 
   const handleGoToLink = (shortUrl: string) => {
     window.open(`http://localhost:3000/r/${shortUrl}`, "_blank");
+    setCount(count + 1);
   };
+
+  function handleVisit(link: string) {
+    handleGoToLink(link.shorted_site);
+  }
 
   const totalClicks = links.reduce((sum, link) => sum + link.click_count, 0);
 
@@ -143,7 +149,7 @@ const DashboardPage = () => {
         setOpen(false);
         toast.success("New shorted link created successfully.");
       }
-      navigate(0);
+      setCount(count + 1);
     } catch (error) {
       console.log(error, "<----- errror post");
       setLoading(false);
@@ -366,7 +372,7 @@ const DashboardPage = () => {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => handleGoToLink(link.shorted_site)}
+                          onClick={() => handleVisit(link)}
                         >
                           <ExternalLink className="w-4 h-4 mr-1" />
                           Visit
