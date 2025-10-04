@@ -1,5 +1,5 @@
 import axios from "axios";
 
 export const http = axios.create({
-  baseURL: "https://localhost:3000/api",
+  baseURL: "https://pendekin-api.hafizh.web.id/api",
 });

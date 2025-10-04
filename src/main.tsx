@@ -9,6 +9,7 @@ import AuthLayout from "./layouts/AuthLayout";
 import HomePage from "./pages/HomePage";
 import PublicLayout from "./layouts/PublicLayout";
 import NotFound from "./pages/NotFound";
+import { Toaster } from "sonner";
 
 createRoot(document.getElementById("root")!).render(
   // <StrictMode>
@@ -24,6 +25,7 @@ createRoot(document.getElementById("root")!).render(
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>
+    <Toaster />
   </BrowserRouter>
   // </StrictMode>
 );
