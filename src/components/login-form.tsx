@@ -22,7 +22,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { http } from "@/helpers/axios";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -42,6 +42,7 @@ export function LoginForm({
   ...props
 }: React.ComponentProps<"div">) {
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -65,6 +66,7 @@ export function LoginForm({
         localStorage.setItem("access_token", response.data.access_token);
         localStorage.setItem("name", response.data.name);
         toast.success(`Welcome back, ${response.data.name} !`);
+        navigate("/dashboard");
       }
       setLoading(false);
     } catch (error) {

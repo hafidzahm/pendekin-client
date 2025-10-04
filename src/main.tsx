@@ -10,18 +10,19 @@ import HomePage from "./pages/HomePage";
 import PublicLayout from "./layouts/PublicLayout";
 import NotFound from "./pages/NotFound";
 import { Toaster } from "sonner";
+import DashboardPage from "./pages/DashboardPage";
 
 createRoot(document.getElementById("root")!).render(
   // <StrictMode>
   <BrowserRouter>
     <Routes>
+      <Route path="/" element={<OnboardingPage />} />
       <Route element={<PublicLayout />}>
-        <Route path="/" element={<OnboardingPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
       </Route>
       <Route element={<AuthLayout />}>
-        <Route path="/dashboard" element={<HomePage />} />
+        <Route path="/dashboard" element={<DashboardPage />} />
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>
