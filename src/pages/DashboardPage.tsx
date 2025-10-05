@@ -16,31 +16,14 @@ import {
   Link as LinkIcon,
   Trash2,
   Pencil,
+  LogOut,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router";
 import { http } from "@/helpers/axios";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogClose,
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Dialog } from "@/components/ui/dialog";
+
+import { Form } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { formSchema } from "@/components/form/formSchema";
 import type z from "zod";
@@ -65,10 +48,10 @@ const DashboardPage = () => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [count, setCount] = useState(0);
+  const navigate = useNavigate();
   useEffect(() => {
     fetchDataUser();
   }, [count]);
-  const navigate = useNavigate();
   // Mock data for demonstration
   const [links, setLinks] = useState([
     {
@@ -210,22 +193,39 @@ const DashboardPage = () => {
     }
   }
 
+  function onLogout() {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("name");
+
+    navigate("/");
+    setTimeout(() => {
+      toast.success("Bye bye, comeback later!");
+    }, 100);
+  }
+
   return (
     <div className="min-h-screen bg-background p-4">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="flex justify-between items-center mb-8">
+
+        <div className="flex flex-row justify-between items-center mb-8">
           <div>
             <h1 className="text-3xl font-bold">Dashboard</h1>
             <p className="text-muted-foreground">Manage your shortened links</p>
           </div>
 
-          <Dialog open={open} onOpenChange={setOpen}>
-            <ButtonFormTrigger name="Add New Link" />
-            <Form {...form}>
-              <DialogForm form={form} loading={loading} onSubmit={onSubmit} />
-            </Form>
-          </Dialog>
+          <div className="flex flex-col md:flex-row gap-3">
+            <Dialog open={open} onOpenChange={setOpen}>
+              <ButtonFormTrigger name="Add New Link" />
+              <Form {...form}>
+                <DialogForm form={form} loading={loading} onSubmit={onSubmit} />
+              </Form>
+            </Dialog>
+            <Button onClick={onLogout}>
+              <LogOut className="w-4 h-4 mr-2" />
+              Logout
+            </Button>
+          </div>
         </div>
 
         {/* Stats Cards */}
@@ -347,8 +347,7 @@ const DashboardPage = () => {
                         </Button>
 
                         <AlertDialog>
-                          <AlertDialogTrigger>
-                            {" "}
+                          <AlertDialogTrigger asChild>
                             <Button
                               variant="outline"
                               size="sm"

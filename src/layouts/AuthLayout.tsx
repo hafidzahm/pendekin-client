@@ -19,29 +19,11 @@ export default function AuthLayout() {
     }
   }
 
-  function onLogout() {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("name");
-
-    navigate("/");
-    setTimeout(() => {
-      toast.success("Bye bye, comeback later!");
-    }, 100);
-  }
   return (
     <div>
-      <header>
-        <nav>
-          <h1>Navigation</h1>
-          <Button onClick={onLogout}>Logout</Button>
-        </nav>
-      </header>
       <main>
         <Outlet />
       </main>
-      <footer>
-        <h1>footer</h1>
-      </footer>
     </div>
   );
 }
