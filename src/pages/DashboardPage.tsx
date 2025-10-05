@@ -143,6 +143,7 @@ const DashboardPage = () => {
       });
       console.log(response, "<------response delete");
       if (response.status === 200) {
+        toast.success("Short link deleted successfully");
         setCount(count + 1);
       }
     } catch (error) {
