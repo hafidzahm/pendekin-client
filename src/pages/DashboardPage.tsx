@@ -14,6 +14,8 @@ import {
   ExternalLink,
   BarChart3,
   Link as LinkIcon,
+  Trash2,
+  Pencil,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router";
@@ -106,6 +108,23 @@ const DashboardPage = () => {
   const handleGoToLink = (shortUrl: string) => {
     window.open(`http://localhost:3000/r/${shortUrl}`, "_blank");
     setCount(count + 1);
+  };
+
+  const handleEditLink = (linkId: number) => {
+    toast({
+      title: "Edit link",
+      description: `Editing link #${linkId}`,
+    });
+    // Navigate to edit page or open edit modal
+  };
+
+  const handleDeleteLink = (linkId: number, siteName: string) => {
+    toast({
+      title: "Link deleted",
+      description: `${siteName} has been deleted successfully.`,
+      variant: "destructive",
+    });
+    // Add delete logic here
   };
 
   function handleVisit(link: string) {
@@ -376,6 +395,26 @@ const DashboardPage = () => {
                         >
                           <ExternalLink className="w-4 h-4 mr-1" />
                           Visit
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleEditLink(link.id)}
+                          className="flex-1 sm:flex-none"
+                        >
+                          <Pencil className="w-4 h-4 sm:mr-1" />
+                          <span className="hidden sm:inline">Edit</span>
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() =>
+                            handleDeleteLink(link.id, link.site_name)
+                          }
+                          className="flex-1 sm:flex-none"
+                        >
+                          <Trash2 className="w-4 h-4 sm:mr-1" />
+                          <span className="hidden sm:inline">Delete</span>
                         </Button>
                       </div>
                     </div>
