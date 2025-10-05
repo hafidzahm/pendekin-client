@@ -47,6 +47,18 @@ import type z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
 const DashboardPage = () => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -118,13 +130,22 @@ const DashboardPage = () => {
     // Navigate to edit page or open edit modal
   };
 
-  const handleDeleteLink = (linkId: number, siteName: string) => {
-    toast({
-      title: "Link deleted",
-      description: `${siteName} has been deleted successfully.`,
-      variant: "destructive",
-    });
+  const handleDeleteLink = async (siteName: string) => {
     // Add delete logic here
+    try {
+      console.log(siteName, "<----- deleteSiteName");
+      const response = await http.delete(`/link/${siteName}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      });
+      console.log(response, "<------response delete");
+      if (response.status === 200) {
+        setCount(count + 1);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   function handleVisit(link: string) {
@@ -405,17 +426,42 @@ const DashboardPage = () => {
                           <Pencil className="w-4 h-4 sm:mr-1" />
                           <span className="hidden sm:inline">Edit</span>
                         </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() =>
-                            handleDeleteLink(link.id, link.site_name)
-                          }
-                          className="flex-1 sm:flex-none"
-                        >
-                          <Trash2 className="w-4 h-4 sm:mr-1" />
-                          <span className="hidden sm:inline">Delete</span>
-                        </Button>
+
+                        <AlertDialog>
+                          <AlertDialogTrigger>
+                            {" "}
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="flex-1 sm:flex-none"
+                            >
+                              <Trash2 className="w-4 h-4 sm:mr-1" />
+                              <span className="hidden sm:inline">Delete</span>
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>
+                                Are you absolutely sure?
+                              </AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This action cannot be undone. This will
+                                permanently delete your account and remove your
+                                data from our servers.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() =>
+                                  handleDeleteLink(link.shorted_site)
+                                }
+                              >
+                                Continue
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                       </div>
                     </div>
                   </div>
