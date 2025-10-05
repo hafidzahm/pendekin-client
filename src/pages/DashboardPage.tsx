@@ -58,6 +58,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import ButtonFormTrigger from "@/components/ButtonFormTrigger";
+import DialogForm from "@/components/DialogForm";
 
 const DashboardPage = () => {
   const [open, setOpen] = useState(false);
@@ -218,100 +220,9 @@ const DashboardPage = () => {
           </div>
 
           <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className="w-4 h-4 mr-2" />
-                Add New Link
-              </Button>
-            </DialogTrigger>
-
+            <ButtonFormTrigger name="Add New Link" />
             <Form {...form}>
-              <DialogContent className="sm:max-w-[425px]">
-                <form onSubmit={form.handleSubmit(onSubmit)}>
-                  <DialogHeader>
-                    <DialogTitle>Add New Link</DialogTitle>
-                    <DialogDescription>
-                      Create a shortened link for easy sharing
-                    </DialogDescription>
-                  </DialogHeader>
-                  <div className="grid gap-4 pt-5">
-                    <div className="grid gap-3">
-                      <FormField
-                        control={form.control}
-                        name="original_site"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Original URL</FormLabel>
-                            <FormControl>
-                              <Input
-                                placeholder="https://example.com/very-long-url"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormDescription>
-                              Enter the full URL you want to shorten
-                            </FormDescription>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                    <div className="grid gap-3">
-                      <FormField
-                        control={form.control}
-                        name="shorted_site"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Custom Name</FormLabel>
-                            <FormControl>
-                              <Input placeholder="shadcn" {...field} />
-                            </FormControl>
-                            <FormDescription>
-                              This is your custom link name.
-                            </FormDescription>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                    <div className="grid gap-3">
-                      <div className="bg-muted p-4 rounded-md">
-                        <p className="text-sm font-medium mb-2">Preview:</p>
-                        <p className="text-sm text-muted-foreground">
-                          pendekin.app/
-                          {form.watch("shorted_site") || "abc123"}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <DialogFooter>
-                    <DialogClose asChild>
-                      <Button variant="outline">Cancel</Button>
-                    </DialogClose>
-
-                    <Button type="submit" disabled={loading}>
-                      {loading ? (
-                        <span className="flex items-center gap-1">
-                          Creating short link
-                          <span className="flex gap-0.5">
-                            <span className="animate-[bounce_1s_ease-in-out_0s_infinite]">
-                              .
-                            </span>
-                            <span className="animate-[bounce_1s_ease-in-out_0.2s_infinite]">
-                              .
-                            </span>
-                            <span className="animate-[bounce_1s_ease-in-out_0.4s_infinite]">
-                              .
-                            </span>
-                          </span>
-                        </span>
-                      ) : (
-                        "Create short link"
-                      )}
-                    </Button>
-                  </DialogFooter>
-                </form>
-              </DialogContent>
+              <DialogForm form={form} loading={loading} onSubmit={onSubmit} />
             </Form>
           </Dialog>
         </div>
@@ -367,10 +278,17 @@ const DashboardPage = () => {
                 <p className="text-muted-foreground mb-4">
                   Start by creating your first shortened link
                 </p>
-                <Button onClick={() => navigate("/add-site")}>
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add Your First Link
-                </Button>
+
+                <Dialog open={open} onOpenChange={setOpen}>
+                  <ButtonFormTrigger name=" Add Your First Link" />
+                  <Form {...form}>
+                    <DialogForm
+                      form={form}
+                      loading={loading}
+                      onSubmit={onSubmit}
+                    />
+                  </Form>
+                </Dialog>
               </div>
             ) : (
               <div className="space-y-4">
