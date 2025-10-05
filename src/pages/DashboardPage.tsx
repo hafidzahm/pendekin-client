@@ -326,7 +326,7 @@ const DashboardPage = () => {
                           onClick={() => handleCopyLink(link.shorted_site)}
                         >
                           <Copy className="w-4 h-4 mr-1" />
-                          Copy
+                          <span className="hidden sm:inline">Copy</span>
                         </Button>
                         <Button
                           variant="outline"
@@ -334,7 +334,7 @@ const DashboardPage = () => {
                           onClick={() => handleVisit(link)}
                         >
                           <ExternalLink className="w-4 h-4 mr-1" />
-                          Visit
+                          <span className="hidden sm:inline">Visit</span>
                         </Button>
                         <Button
                           variant="outline"
