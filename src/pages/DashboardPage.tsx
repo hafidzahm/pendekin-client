@@ -364,7 +364,7 @@ const DashboardPage = () => {
                               </AlertDialogTitle>
                               <AlertDialogDescription>
                                 This action cannot be undone. This will
-                                permanently delete your account and remove your
+                                permanently delete your link and remove your
                                 data from our servers.
                               </AlertDialogDescription>
                             </AlertDialogHeader>
